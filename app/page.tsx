@@ -19,7 +19,11 @@ import {
 
 const handleDownload = () => {
   console.log("A abrir novo separador para descarregar notas");
-  window.open("https://www.churchofjesuschrist.org/notes/api/v3/annotations/export/csv?highlightsWithNotesOnly=false", "_blank", "noopener,noreferrer");
+  const link = document.createElement('a');
+  link.href = "https://www.churchofjesuschrist.org/notes/api/v3/annotations/export/csv?highlightsWithNotesOnly=false";
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.click();
 }
 
 const handleLogin = () => {
