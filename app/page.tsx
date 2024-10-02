@@ -18,8 +18,24 @@ import {
 
 
 const handleDownload = () => {
-  console.log("A abrir novo separador para descarregar notas");
-  window.open("https://www.churchofjesuschrist.org/notes/api/v3/annotations/export/csv?highlightsWithNotesOnly=false", "_blank", "noopener,noreferrer");
+  console.log("A tentar descarregar notas");
+  fetch("https://www.churchofjesuschrist.org/notes/api/v3/annotations/export/csv?highlightsWithNotesOnly=false", {
+    method: 'GET',
+    credentials: 'include'
+  })
+  .then(response => response.blob())
+  .then(blob => {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = 'notas_lds.csv';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    console.log("Notas descarregadas com sucesso");
+  })
+  .catch(error => console.error("Erro ao descarregar notas:", error));
 }
 
 const handleLogin = () => {
