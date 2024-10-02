@@ -24,7 +24,7 @@ const handleDownload = () => {
 
 const handleLogin = () => {
   console.log("Login Popup opened");
-  const popup = window.open("https://www.churchofjesuschrist.org/my-home/auth/okta?lang=eng&return_uri=https%3A%2F%2Fwww.churchofjesuschrist.org%2Fmy-home%3Flang%3Deng", "ldsLogin", "width=600,height=600");
+  const popup = window.open("https://www.churchofjesuschrist.org/my-home/auth/okta?lang=eng&return_uri=https%3A%2F%2Fwww.churchofjesuschrist.org%2Fmy-home%3Flang%3Deng", "_blank", "noopener,noreferrer");
 };
 
 const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
