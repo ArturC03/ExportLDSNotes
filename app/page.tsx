@@ -36,32 +36,31 @@ const convertTo = {
   html: <FaHtml5 />,
 }
 
-} from "@/components/ui/dialog"
-
-
 const handleDownload = () => {
   console.log("A tentar iniciar o download das notas");
 
   const handleDownloadError = (error: Error) => {
+
     console.error("Erro ao tentar iniciar o download das notas:", error.message);
-    // Aqui pode-se adicionar lógica para lidar com o erro
     // Por exemplo, mostrar uma mensagem ao utilizador
+
   };
+
 
   const initiateDownload = () => {
     try {
-      // URL para a página de exportação de notas
-      const exportPageUrl = "https://www.churchofjesuschrist.org/notes/api/v3/annotations/export/csv?highlightsWithNotesOnly=false";
-      // Abrir a página de exportação na mesma janela
-      window.location.href = exportPageUrl;
+      console.log("A tentar aceder à página de exportação de notas.");
 
+      // URL para a página de login
+      const loginUrl = "https://www.churchofjesuschrist.org/notes/api/v3/annotations/export/csv?highlightsWithNotesOnly=false";
 
-      console.log("A redirecionar para a página de exportação. O utilizador deve seguir as instruções para completar o download.");
+      // Abrir a página de login numa nova janela
+      window.open(loginUrl, "_blank", "noopener,noreferrer");
+
+      console.log("Página de login aberta. O utilizador deve fazer login e navegar manualmente para a exportação de notas.");
 
     } catch (error) {
-
-      handleDownloadError(error instanceof Error ? error : new Error('Erro desconhecido ao redirecionar para a página de exportação'));
-
+      handleDownloadError(error instanceof Error ? error : new Error('Erro ao tentar abrir a página de login'));
     }
 
   };
@@ -79,8 +78,6 @@ const handleLogin = () => {
   const popup = window.open("https://www.churchofjesuschrist.org/my-home/auth/okta?lang=eng&return_uri=https%3A%2F%2Fwww.churchofjesuschrist.org%2Fmy-home%3Flang%3Deng", "_blank", "noopener,noreferrer");
 
 };
-
-
 
 const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
   const file = event.target.files?.[0];
