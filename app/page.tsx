@@ -36,6 +36,9 @@ const convertTo = {
   html: <FaHtml5 />,
 }
 
+} from "@/components/ui/dialog"
+
+
 const handleDownload = () => {
   console.log("A tentar iniciar o download das notas");
 
@@ -52,19 +55,32 @@ const handleDownload = () => {
       // Abrir a página de exportação na mesma janela
       window.location.href = exportPageUrl;
 
+
       console.log("A redirecionar para a página de exportação. O utilizador deve seguir as instruções para completar o download.");
+
     } catch (error) {
+
       handleDownloadError(error instanceof Error ? error : new Error('Erro desconhecido ao redirecionar para a página de exportação'));
+
     }
+
   };
 
+
   initiateDownload();
+
 }
 
+
 const handleLogin = () => {
+
   console.log("Login Popup opened");
+
   const popup = window.open("https://www.churchofjesuschrist.org/my-home/auth/okta?lang=eng&return_uri=https%3A%2F%2Fwww.churchofjesuschrist.org%2Fmy-home%3Flang%3Deng", "_blank", "noopener,noreferrer");
+
 };
+
+
 
 const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
   const file = event.target.files?.[0];
