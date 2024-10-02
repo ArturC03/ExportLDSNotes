@@ -18,24 +18,28 @@ import {
 
 
 const handleDownload = () => {
-  console.log("A tentar descarregar notas");
-  fetch("https://www.churchofjesuschrist.org/notes/api/v3/annotations/export/csv?highlightsWithNotesOnly=false", {
-    method: 'GET',
-    credentials: 'include'
-  })
-  .then(response => response.blob())
-  .then(blob => {
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.style.display = 'none';
-    a.href = url;
-    a.download = 'notas_lds.csv';
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    console.log("Notas descarregadas com sucesso");
-  })
-  .catch(error => console.error("Erro ao descarregar notas:", error));
+  console.log("A tentar iniciar o download das notas");
+
+  const handleDownloadError = (error: Error) => {
+    console.error("Erro ao tentar iniciar o download das notas:", error.message);
+    // Aqui pode-se adicionar lógica para lidar com o erro
+    // Por exemplo, mostrar uma mensagem ao utilizador
+  };
+
+  const initiateDownload = () => {
+    try {
+      // URL para a página de exportação de notas
+      const exportPageUrl = "https://www.churchofjesuschrist.org/notes/api/v3/annotations/export/csv?highlightsWithNotesOnly=false";
+      // Abrir a página de exportação na mesma janela
+      window.location.href = exportPageUrl;
+
+      console.log("A redirecionar para a página de exportação. O utilizador deve seguir as instruções para completar o download.");
+    } catch (error) {
+      handleDownloadError(error instanceof Error ? error : new Error('Erro desconhecido ao redirecionar para a página de exportação'));
+    }
+  };
+
+  initiateDownload();
 }
 
 const handleLogin = () => {
