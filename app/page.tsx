@@ -1,9 +1,12 @@
 "use client";
 
+import { csvToJson } from "@/app/includes/csvToJson";
+import Head from "next/head";
 // Components
 import { Toggle } from "@/components/ui/toggle";
 import { Separator } from "@/components/ui/separator";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
@@ -86,6 +89,7 @@ const handleLogin = () => {
 };
 
 export default function Home() {
+  const router = useRouter();
   const { toast } = useToast();
   const [fileUploaded, setFileUploaded] = useState(false);
   const [i, setI] = useState(1);
@@ -100,26 +104,57 @@ export default function Home() {
         title: "Ups! Looks like you didn't upload a file",
         description: "Please upload a file before proceeding",
       });
-    } else setI(i + 1);
+    } else {
+      setI(i + 1);
+    }
   };
+
+  const goToViewCSV = () => {
+    if (blobUrl) {
+      router.push(`/ViewCSV?blobUrl=${encodeURIComponent(blobUrl)}`);
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Ups! Looks like you didn't upload a file",
+        description: "Please upload a file before proceeding",
+      });
+      console.error("No Blob URL available");
+      // Handle the error, maybe show a toast to the user
+    }
+  };
+
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Processar o ficheiro CSV
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         const csvText = e.target?.result as string;
-        console.log("Conteúdo do ficheiro CSV:", csvText);
-        csvContent = csvText;
-        setFileUploaded(true);
+        console.log("CSV file content:", csvText);
+
+        try {
+          const jsonData = await csvToJson(csvText);
+          console.log("Converted JSON:", jsonData);
+
+          // Create a Blob from the JSON data
+          const jsonBlob = new Blob([JSON.stringify(jsonData)], {
+            type: "application/json",
+          });
+          const url = URL.createObjectURL(jsonBlob);
+
+          setBlobUrl(url);
+          setFileUploaded(true);
+        } catch (error) {
+          console.error("Error processing CSV:", error);
+          // Handle error (e.g., show error message to user)
+        }
       };
       reader.readAsText(file);
-      console.log("Ficheiro selecionado:", file.name);
+      console.log("Selected file:", file.name);
       setSelectedFile(file);
     }
   };
-
   // The next button, dialog title, description and content are initialized as empty
   let nextButton = <></>;
   let dialogTitle = <></>;
@@ -167,6 +202,7 @@ export default function Home() {
           <>
             <Input type="file" accept=".csv" onChange={handleFileUpload} />
             {selectedFile && <p>Selected file: {selectedFile.name}</p>}
+            <Button onClick={goToViewCSV}>View CSV</Button>
           </>
         );
         nextButton = <>Next</>;
@@ -242,33 +278,39 @@ export default function Home() {
     );
   } else {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="outline">Click me</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                Make sure you're logged into your LDS account
-              </DialogTitle>
-              <DialogDescription>
-                To proceed, you <b>must</b> be logged in. If you aren't, please{" "}
-                <span>
-                  <Button
-                    variant="link"
-                    className="p-0 m-0"
-                    onClick={handleLogin}
-                  >
-                    Log in
-                  </Button>
-                </span>
-              </DialogDescription>
-            </DialogHeader>
-            <Button onClick={() => setIsLoggedIn(true)}>I'm logged in</Button>
-          </DialogContent>
-        </Dialog>
-      </div>
+      <>
+        <Head>
+          <title> Export LDS Notes</title>
+        </Head>
+        <div className="flex justify-center items-center h-screen">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Click me</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  Make sure you're logged into your LDS account
+                </DialogTitle>
+                <DialogDescription>
+                  To proceed, you <b>must</b> be logged in. If you aren't,
+                  please{" "}
+                  <span>
+                    <Button
+                      variant="link"
+                      className="p-0 m-0"
+                      onClick={handleLogin}
+                    >
+                      Log in
+                    </Button>
+                  </span>
+                </DialogDescription>
+              </DialogHeader>
+              <Button onClick={() => setIsLoggedIn(true)}>I'm logged in</Button>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </>
     );
   }
 }
