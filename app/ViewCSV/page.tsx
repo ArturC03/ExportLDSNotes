@@ -1,12 +1,10 @@
 "use client";
-
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Notes, columns } from "./columns";
 import { DataTable } from "./data-table";
-import Head from "next/head";
 
-export default function ViewCSV() {
+export default function ViewCSVContent() {
   const searchParams = useSearchParams();
   const [data, setData] = useState<Notes[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -45,19 +43,14 @@ export default function ViewCSV() {
   }
 
   return (
-    <>
-      <Head>
-        <title>View CSV</title>
-      </Head>
-      <div className="mx-4 flex justify-center items-center h-screen">
-        <div className="w-screen m-4 rounded-md border p-4">
-          {data.length > 0 ? (
-            <DataTable columns={columns} data={data} />
-          ) : (
-            <p>Loading data...</p>
-          )}
-        </div>
+    <div className="mx-4 flex justify-center items-center h-screen">
+      <div className="w-[w-screen-sm] w-full">
+        {data.length > 0 ? (
+          <DataTable columns={columns} data={data} />
+        ) : (
+          <p>Loading data...</p>
+        )}
       </div>
-    </>
+    </div>
   );
 }
